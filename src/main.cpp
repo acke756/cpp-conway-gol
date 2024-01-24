@@ -1,6 +1,15 @@
 #include <iostream>
+#include <string>
 
 int main(int argc, char** argv) {
-  std::cout << "Hello world!" << std::endl;
+  int state = 0;
+  auto& in = std::cin;
+
+  std::string line;
+  while (in.good()) {
+    std::cout << state++;
+    std::getline(in, line);
+  }
+
   return EXIT_SUCCESS;
 }
