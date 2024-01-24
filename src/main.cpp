@@ -21,8 +21,27 @@ void disable_alt_buffer(std::ostream& out) {
   out << "\033[?1049l";
 }
 
+class ConwayGol {
+  int state_ = 0;
+
+  friend std::ostream& operator<<(std::ostream& os, const ConwayGol& gol);
+
+  public:
+  ConwayGol(): state_(0) {
+  }
+
+  void update() {
+    state_++;
+  }
+};
+
+std::ostream& operator<<(std::ostream& os, const ConwayGol& gol) {
+  os << gol.state_;
+  return os;
+}
+
 int main(int argc, char** argv) {
-  int state = 0;
+  ConwayGol gol;
   auto& in = std::cin;
   auto& out = std::cout;
 
@@ -33,9 +52,10 @@ int main(int argc, char** argv) {
   std::string line;
   while (in.good()) {
     clear_screen(out);
-    out << state++;
+    out << gol;
     out.flush();
 
+    gol.update();
     std::getline(in, line);
   }
 
