@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include <conway-gol/conway-gol.hpp>
+
 void hide_cursor(std::ostream& out) {
   out << "\033[?25l";
 }
@@ -19,25 +21,6 @@ void enable_alt_buffer(std::ostream& out) {
 
 void disable_alt_buffer(std::ostream& out) {
   out << "\033[?1049l";
-}
-
-class ConwayGol {
-  int state_ = 0;
-
-  friend std::ostream& operator<<(std::ostream& os, const ConwayGol& gol);
-
-  public:
-  ConwayGol(): state_(0) {
-  }
-
-  void update() {
-    state_++;
-  }
-};
-
-std::ostream& operator<<(std::ostream& os, const ConwayGol& gol) {
-  os << gol.state_;
-  return os;
 }
 
 int main(int argc, char** argv) {

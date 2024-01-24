@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
 project(cpp-conway-gol VERSION 0.0.0)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
-set(MAIN_EXE conway-gol)
+  # Ensure -std=c++xx instead of -std=g++xx
+  set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(${MAIN_EXE} src/main.cpp)
+  # Support folders in IDEs
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+endif()
 
-add_custom_target(run
-  COMMAND ${MAIN_EXE}
-  DEPENDS ${MAIN_EXE}
-  WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
-)
+add_subdirectory(src)
+add_subdirectory(apps)
