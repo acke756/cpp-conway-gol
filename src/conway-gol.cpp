@@ -2,7 +2,9 @@
 
 #include <random>
 
-// --- ConwayGol methods ---
+typedef ConwayGol::size_type size_type;
+
+// --- Public methods ---
 
 ConwayGol::ConwayGol(size_type width, size_type height):
     width_(width),
@@ -15,6 +17,16 @@ ConwayGol::ConwayGol(size_type width, size_type height):
   }
 }
 
+bool ConwayGol::at(size_type row, size_type column) const {
+  // TODO: Assert that row and column are in range.
+  return data_[index_of_(row, column)];
+}
+
+std::vector<bool>::reference ConwayGol::at(size_type row, size_type column) {
+  // TODO: Assert that row and column are in range.
+  return data_[index_of_(row, column)];
+}
+
 void ConwayGol::update() {
   for (auto it = data_.begin(); it != data_.end(); it++) {
     *it = !*it;
@@ -24,13 +36,9 @@ void ConwayGol::update() {
 // --- Non-member functions ---
 
 std::ostream& operator<<(std::ostream& os, const ConwayGol& gol) {
-  typedef ConwayGol::size_type size_type;
-
   for (size_type row = 0; row < gol.height_; row++) {
     for (size_type column = 0; column < gol.width_; column++) {
-      size_type index = row * gol.width_ + column;
-
-      os << (gol.data_[index] ? '*' : ' ');
+      os << (gol.at(row, column) ? '*' : ' ');
     }
 
     if (row != gol.height_ - 1) {
