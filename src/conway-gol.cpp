@@ -28,9 +28,43 @@ std::vector<bool>::reference ConwayGol::at(size_type row, size_type column) {
 }
 
 void ConwayGol::update() {
-  for (auto it = data_.begin(); it != data_.end(); it++) {
-    *it = !*it;
+  // TODO: Look into memory optimization.
+  std::vector<bool> new_data(data_.size());
+
+  for (size_type row = 0; row < height_; row++) {
+    for (size_type column = 0; column < width_; column++) {
+      unsigned int nb_count = live_neighbour_count_(row, column);
+
+      if (nb_count == 3) {
+        new_data[index_of_(row, column)] = true;
+      } else if (nb_count < 2 || nb_count > 3) {
+        new_data[index_of_(row, column)] = false;
+      } else {
+        new_data[index_of_(row, column)] = at(row, column);
+      }
+    }
   }
+
+  data_.swap(new_data);
+}
+
+// --- Private methods ---
+
+unsigned int ConwayGol::live_neighbour_count_(size_type row, size_type column) const {
+  unsigned int retval = 0;
+
+  // Abbreviating neighbour as nb.
+  for (size_type nb_row = row - 1; nb_row <= row + 1; nb_row++) {
+    for (size_type nb_column = column - 1; nb_column <= column + 1; nb_column++) {
+      if (!is_valid_index_(nb_row, nb_column) || (nb_row == row && nb_column == column)) {
+        continue;
+      }
+
+      retval += at(nb_row, nb_column) ? 1 : 0;
+    }
+  }
+
+  return retval;
 }
 
 // --- Non-member functions ---
