@@ -3,33 +3,36 @@
 #include <ostream>
 #include <vector>
 
-class ConwayGol {
-  public:
-  typedef std::vector<bool>::size_type size_type;
+namespace conway_gol {
+  class Gol {
+    public:
+    typedef std::vector<bool>::size_type size_type;
 
-  ConwayGol(size_type width, size_type height);
+    Gol(size_type width, size_type height);
 
-  bool at(size_type row, size_type column) const;
-  std::vector<bool>::reference at(size_type row, size_type column);
+    bool at(size_type row, size_type column) const;
+    std::vector<bool>::reference at(size_type row, size_type column);
 
-  void update();
+    void update();
 
-  friend std::ostream& operator<<(std::ostream& os, const ConwayGol& gol);
+    friend std::ostream& operator<<(std::ostream& os, const Gol& gol);
 
-  private:
-  const size_type width_;
-  const size_type height_;
-  std::vector<bool> data_;
+    private:
+    const size_type width_;
+    const size_type height_;
+    std::vector<bool> data_;
 
-  constexpr size_type index_of_(size_type row, size_type column) const {
-    return row * width_ + column;
-  }
+    constexpr size_type index_of_(size_type row, size_type column) const {
+      return row * width_ + column;
+    }
 
-  constexpr bool is_valid_index_(size_type row, size_type column) const {
-    return row >= 0 && row < height_ && column > 0 && column < width_;
-  }
+    constexpr bool is_valid_index_(size_type row, size_type column) const {
+      return row >= 0 && row < height_ && column > 0 && column < width_;
+    }
 
-  unsigned int live_neighbour_count_(size_type row, size_type column) const;
-};
+    unsigned int live_neighbour_count_(size_type row, size_type column) const;
+  };
 
-std::ostream& operator<<(std::ostream& os, const ConwayGol& gol);
+  std::ostream& operator<<(std::ostream& os, const Gol& gol);
+
+} // namespace conway_gol
