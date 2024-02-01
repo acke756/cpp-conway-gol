@@ -1,4 +1,4 @@
-#include <conway-gol/conway-gol.hpp>
+#include <conway_gol/gol.hpp>
 
 #include <random>
 

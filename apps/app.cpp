@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <conway-gol/conway-gol.hpp>
+#include <conway_gol/gol.hpp>
 
 void hide_cursor(std::ostream& out) {
   out << "\033[?25l";
