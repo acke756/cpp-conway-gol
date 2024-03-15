@@ -1,17 +1,18 @@
 #include <conway_gol/gol.hpp>
 
+#include <iostream>
 #include <random>
 
 namespace conway_gol {
 
-  typedef Gol::size_type size_type;
+  using size_type = typename Gol::size_type;
+  using const_reference = typename Gol::const_reference;
+  using reference = typename Gol::reference;
 
   // --- Public methods ---
 
   Gol::Gol(size_type width, size_type height):
-      width_(width),
-      height_(height),
-      data_(width * height) {
+      data_(width, height) {
     auto rng = std::mt19937();
     auto dist = std::bernoulli_distribution();
     for (auto it = data_.begin(); it != data_.end(); it++) {
@@ -19,50 +20,46 @@ namespace conway_gol {
     }
   }
 
-  bool Gol::at(size_type row, size_type column) const {
-    // TODO: Assert that row and column are in range.
-    return data_[index_of_(row, column)];
+  const_reference Gol::at(size_type column, size_type row) const {
+    return data_.at(column, row);
   }
 
-  std::vector<bool>::reference Gol::at(size_type row, size_type column) {
-    // TODO: Assert that row and column are in range.
-    return data_[index_of_(row, column)];
+  reference Gol::at(size_type column, size_type row) {
+    return data_.at(column, row);
   }
 
   void Gol::update() {
     // TODO: Look into memory optimization.
-    std::vector<bool> new_data(data_.size());
+    Grid<bool> new_data(data_);
 
-    for (size_type row = 0; row < height_; row++) {
-      for (size_type column = 0; column < width_; column++) {
-        unsigned int nb_count = live_neighbour_count_(row, column);
+    for (size_type row = 0; row < data_.height(); row++) {
+      for (size_type column = 0; column < data_.width(); column++) {
+        unsigned int nb_count = live_neighbour_count_(column, row);
 
         if (nb_count == 3) {
-          new_data[index_of_(row, column)] = true;
+          new_data.at(column, row) = true;
         } else if (nb_count < 2 || nb_count > 3) {
-          new_data[index_of_(row, column)] = false;
-        } else {
-          new_data[index_of_(row, column)] = at(row, column);
+          new_data.at(column, row) = false;
         }
       }
     }
 
-    data_.swap(new_data);
+    std::swap(data_, new_data);
   }
 
   // --- Private methods ---
 
-  unsigned int Gol::live_neighbour_count_(size_type row, size_type column) const {
+  unsigned int Gol::live_neighbour_count_(size_type column, size_type row) const {
     unsigned int retval = 0;
 
     // Abbreviating neighbour as nb.
-    for (size_type nb_row = row - 1; nb_row <= row + 1; nb_row++) {
-      for (size_type nb_column = column - 1; nb_column <= column + 1; nb_column++) {
-        if (!is_valid_index_(nb_row, nb_column) || (nb_row == row && nb_column == column)) {
+    for (size_type nb_row = row - 1; nb_row != row + 2; nb_row++) {
+      for (size_type nb_column = column - 1; nb_column != column + 2; nb_column++) {
+        if (!data_.is_valid_index_(nb_column, nb_row) || (nb_row == row && nb_column == column)) {
           continue;
         }
 
-        retval += at(nb_row, nb_column) ? 1 : 0;
+        retval += data_.at(nb_column, nb_row) ? 1 : 0;
       }
     }
 
@@ -72,12 +69,12 @@ namespace conway_gol {
   // --- Non-member functions ---
 
   std::ostream& operator<<(std::ostream& os, const Gol& gol) {
-    for (size_type row = 0; row < gol.height_; row++) {
-      for (size_type column = 0; column < gol.width_; column++) {
-        os << (gol.at(row, column) ? '*' : ' ');
+    for (size_type row = 0; row < gol.data_.height(); row++) {
+      for (size_type column = 0; column < gol.data_.width(); column++) {
+        os << (gol.data_.at(column, row) ? '*' : ' ');
       }
 
-      if (row != gol.height_ - 1) {
+      if (row != gol.data_.height() - 1) {
         os << std::endl;
       }
     }

@@ -24,7 +24,7 @@ void disable_alt_buffer(std::ostream& out) {
 }
 
 int main(int argc, char** argv) {
-  conway_gol::Gol gol(80, 50);;
+  conway_gol::Gol gol(80, 50);
   auto& in = std::cin;
   auto& out = std::cout;
 
