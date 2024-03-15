@@ -17,11 +17,31 @@ namespace conway_gol {
     using const_iterator = typename container_type_::const_iterator;
 
     Grid() = delete;
+    ~Grid() = default;
 
     Grid(size_type width, size_type height):
-      width_(width),
-      height_(height),
-      data_(width * height) {
+        width_(width),
+        height_(height),
+        data_(width * height) {
+    }
+
+    Grid(const Grid&) = default;
+
+    Grid(Grid&& other):
+        width_(other.width),
+        height_(other.height),
+        data_(std::move(other.data)) {
+      other.width_ = 0;
+      other.height_ = 0;
+    }
+
+    Grid& operator=(const Grid&) = default;
+
+    Grid& operator=(Grid&& other) {
+      data_ = std::move(other.data_);
+      other.width_ = 0;
+      other.height_ = 0;
+      return *this;
     }
 
     inline size_type width() const noexcept {

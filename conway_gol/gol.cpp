@@ -44,7 +44,7 @@ namespace conway_gol {
       }
     }
 
-    std::swap(data_, new_data);
+    data_ = std::move(new_data);
   }
 
   // --- Private methods ---
