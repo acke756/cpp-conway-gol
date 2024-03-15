@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
-project(cpp-conway-gol VERSION 0.0.0)
+project(conway_gol VERSION 0.0.0)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
@@ -10,5 +13,10 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
-add_subdirectory(src)
-add_subdirectory(apps)
+set(SOURCES
+  ${CMAKE_PROJECT_NAME}/main.cpp
+  ${CMAKE_PROJECT_NAME}/gol.cpp
+)
+
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE .)
