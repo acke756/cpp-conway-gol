@@ -68,18 +68,18 @@ namespace conway_gol {
       return data_.end();
     }
 
-    inline bool is_valid_index_(size_type column, size_type row) const noexcept {
+    inline bool has_data_at(size_type column, size_type row) const noexcept {
       return column < width_ && row < height_;
     }
 
     const_reference at(size_type column, size_type row) const {
       throw_if_invalid_index_(column, row);
-      return data_.at(to_index_(column, row));
+      return data_.at(index_of_(column, row));
     }
 
     reference at(size_type column, size_type row) {
       throw_if_invalid_index_(column, row);
-      return data_.at(to_index_(column, row));
+      return data_.at(index_of_(column, row));
     }
 
     private:
@@ -87,12 +87,12 @@ namespace conway_gol {
     size_type height_;
     container_type_ data_;
 
-    inline size_type to_index_(size_type column, size_type row) const noexcept {
+    inline size_type index_of_(size_type column, size_type row) const noexcept {
       return width_ * row + column;
     }
 
     void throw_if_invalid_index_(size_type column, size_type row) const {
-      if (!is_valid_index_(column, row)) {
+      if (!has_data_at(column, row)) {
         std::ostringstream oss;
         oss << "Index (" << column << ", " << row
           << ") out of range for Grid with dimensions ("

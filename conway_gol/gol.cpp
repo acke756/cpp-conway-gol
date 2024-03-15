@@ -55,7 +55,7 @@ namespace conway_gol {
     // Abbreviating neighbour as nb.
     for (size_type nb_row = row - 1; nb_row != row + 2; nb_row++) {
       for (size_type nb_column = column - 1; nb_column != column + 2; nb_column++) {
-        if (!data_.is_valid_index_(nb_column, nb_row) || (nb_row == row && nb_column == column)) {
+        if (!data_.has_data_at(nb_column, nb_row) || (nb_row == row && nb_column == column)) {
           continue;
         }
 
