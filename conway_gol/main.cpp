@@ -102,7 +102,7 @@ class GolController {
           gol_.update();
           break;
 
-        case SDLK_d:
+        case SDLK_w:
           if (event.keysym.mod & KMOD_CTRL
               && !(event.keysym.mod & (KMOD_SHIFT | KMOD_ALT))) {
             push_quit_event_(event.timestamp);

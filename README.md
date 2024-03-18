@@ -15,4 +15,4 @@ This should result in the executable file `conway-gol`.
 
 While the program is running, the following keyboard inputs are available:
 - Enter: Advance to the next state.
-- Ctrl-D: Exit.
+- Ctrl-W: Exit.
