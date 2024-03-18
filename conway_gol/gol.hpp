@@ -13,6 +13,9 @@ namespace conway_gol {
 
     Gol(size_type width, size_type height);
 
+    size_type width() const;
+    size_type height() const;
+
     const_reference at(size_type row, size_type column) const;
     reference at(size_type row, size_type column);
 

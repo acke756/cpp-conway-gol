@@ -20,6 +20,14 @@ namespace conway_gol {
     }
   }
 
+  size_type Gol::width() const {
+    return data_.width();
+  }
+
+  size_type Gol::height() const {
+    return data_.height();
+  }
+
   const_reference Gol::at(size_type column, size_type row) const {
     return data_.at(column, row);
   }
