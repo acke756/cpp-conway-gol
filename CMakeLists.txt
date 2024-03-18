@@ -18,5 +18,14 @@ set(SOURCES
   ${CMAKE_PROJECT_NAME}/gol.cpp
 )
 
+find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
+find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
+
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE .)
+
+if(TARGET SDL::SDL2main)
+  target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2main)
+endif()
+
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2)
