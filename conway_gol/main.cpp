@@ -85,9 +85,48 @@ class GolView {
     const Gol& gol_;
 };
 
+class GolController {
+  public:
+    GolController() = delete;
+    GolController(Gol& gol):
+        gol_(gol) {
+    }
+
+    void handle_event(const SDL_KeyboardEvent& event) {
+      if (event.type == SDL_KEYUP) {
+        return;
+      }
+
+      switch (event.keysym.sym) {
+        case SDLK_RETURN:
+          gol_.update();
+          break;
+
+        case SDLK_d:
+          if (event.keysym.mod & KMOD_CTRL
+              && !(event.keysym.mod & (KMOD_SHIFT | KMOD_ALT))) {
+            push_quit_event_(event.timestamp);
+          }
+          break;
+      }
+    }
+
+  private:
+    Gol& gol_;
+
+    void push_quit_event_(Uint32 timestamp) {
+      SDL_Event event;
+      event.type = SDL_QUIT;
+      event.quit.timestamp = timestamp;
+
+      SDL_PushEvent(&event);
+    }
+};
+
 int on_create_renderer(SDL_Renderer* renderer) {
   SDL_Event event;
   conway_gol::Gol gol(80, 50);
+  GolController controller(gol);
 
   SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
       SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height());
@@ -97,34 +136,30 @@ int on_create_renderer(SDL_Renderer* renderer) {
   }
 
   GolView gol_view(std::move(texture), gol);
-  
-  int retval;
 
   for (;;) {
-    if (SDL_WaitEvent(&event) == 0) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error while waiting for event: %s", SDL_GetError());
-      retval = EXIT_FAILURE;
-      break;
-    }
-
-    if (event.type == SDL_QUIT) {
-      retval = EXIT_SUCCESS;
-      break;
-    }
-
-    SDL_SetRenderDrawColor(renderer, 0x0F, 0x0F, 0x0F, 0xFF);
-    SDL_RenderClear(renderer);
-
     if (gol_view.draw(renderer, NULL) < 0) {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't copy texture to renderer: %s", SDL_GetError());
-      retval = EXIT_FAILURE;
-      break;
+      return EXIT_FAILURE;
     }
 
     SDL_RenderPresent(renderer);
+
+    if (SDL_WaitEvent(&event) == 0) {
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error while waiting for event: %s", SDL_GetError());
+      return EXIT_FAILURE;
+    }
+
+    if (event.type == SDL_QUIT) {
+      return EXIT_SUCCESS;
+    }
+
+    if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN) {
+      controller.handle_event(event.key);
+    }
   }
 
-  return retval;
+  return EXIT_SUCCESS;
 }
 
 int on_create_window(SDL_Window* window) {
