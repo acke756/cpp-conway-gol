@@ -13,10 +13,11 @@ typedef struct pixel_rgb24 {
 class GolView {
   public:
     GolView() = delete;
-    GolView(SDL_Texture*&& texture, const Gol& gol):
-        texture_(texture),
+
+    GolView(SDL_Renderer* renderer, const Gol& gol):
+        texture_(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
+          SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height())),
         gol_(gol) {
-      texture = NULL;
     }
 
     GolView(const GolView&) = delete;
@@ -31,6 +32,10 @@ class GolView {
 
     ~GolView() {
       SDL_DestroyTexture(texture_);
+    }
+
+    explicit operator bool() const noexcept {
+      return texture_;
     }
 
     int draw(SDL_Renderer* renderer, const SDL_Rect* dstrect) {
@@ -110,14 +115,11 @@ int on_create_renderer(SDL_Renderer* renderer) {
   conway_gol::Gol gol(80, 50);
   GolController controller(gol);
 
-  SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
-      SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height());
-  if (texture == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture: %s", SDL_GetError());
+  GolView gol_view(renderer, gol);
+  if (!gol_view) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create gol_view: %s", SDL_GetError());
     return EXIT_FAILURE;
   }
-
-  GolView gol_view(std::move(texture), gol);
 
   for (;;) {
     if (gol_view.draw(renderer, NULL) < 0) {
