@@ -6,6 +6,10 @@
 
 using namespace conway_gol;
 
+typedef struct pixel_rgb24 {
+  uint8_t r, g, b;
+} pixel_rgb24_t;
+
 class GolView {
   public:
     GolView() = delete;
@@ -30,7 +34,7 @@ class GolView {
     }
 
     int draw(SDL_Renderer* renderer, const SDL_Rect* dstrect) {
-      uint8_t* pixels;
+      pixel_rgb24_t* pixels;
       int pitch;
 
       if (SDL_LockTexture(texture_, NULL, (void**) &pixels, &pitch) < 0) {
@@ -38,14 +42,13 @@ class GolView {
         return EXIT_FAILURE;
       }
 
+      static constexpr pixel_rgb24_t alive = { 0xFF, 0xFF, 0xFF };
+      static constexpr pixel_rgb24_t dead = {0};
+
       for (Gol::size_type row = 0; row < gol_.height(); row++) {
         for (Gol::size_type column = 0; column < gol_.width(); column++) {
-          size_t pixel_index = (row * gol_.width() + column) * SDL_BYTESPERPIXEL(SDL_PIXELFORMAT_RGB24);
-          uint8_t color = gol_.at(column, row) ? 0xFF : 0;
-
-          pixels[pixel_index] = color;
-          pixels[pixel_index + 1] = color;
-          pixels[pixel_index + 2] = color;
+          size_t pixel_index = (row * gol_.width() + column);
+          pixels[pixel_index] = gol_.at(column, row) ? alive : dead;
         }
       }
 
