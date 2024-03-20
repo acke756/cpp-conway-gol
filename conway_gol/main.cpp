@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 
 #include <SDL2/SDL.h>
@@ -10,6 +11,15 @@ typedef struct pixel_rgb24 {
   uint8_t r, g, b;
 } pixel_rgb24_t;
 
+class TextureDeleter {
+  public:
+    void operator()(SDL_Texture* texture) noexcept {
+      SDL_DestroyTexture(texture);
+    }
+};
+
+typedef std::unique_ptr<SDL_Texture, TextureDeleter> unique_texture_ptr;
+
 class GolView {
   public:
     GolView() = delete;
@@ -21,28 +31,22 @@ class GolView {
     }
 
     GolView(const GolView&) = delete;
-    GolView(GolView&& other):
-        texture_(other.texture_),
-        gol_(other.gol_) {
-      other.texture_ = NULL;
-    }
+    GolView(GolView&& other) = default;
 
     GolView& operator=(GolView&) = delete;
     GolView& operator=(GolView&&) = delete;
 
-    ~GolView() {
-      SDL_DestroyTexture(texture_);
-    }
+    ~GolView() = default;
 
     explicit operator bool() const noexcept {
-      return texture_;
+      return static_cast<bool>(texture_);
     }
 
     int draw(SDL_Renderer* renderer, const SDL_Rect* dstrect) {
       pixel_rgb24_t* pixels;
       int pitch;
 
-      if (SDL_LockTexture(texture_, NULL, (void**) &pixels, &pitch) < 0) {
+      if (SDL_LockTexture(texture_.get(), NULL, (void**) &pixels, &pitch) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't lock texture: %s", SDL_GetError());
         return EXIT_FAILURE;
       }
@@ -57,9 +61,9 @@ class GolView {
         }
       }
 
-      SDL_UnlockTexture(texture_);
+      SDL_UnlockTexture(texture_.get());
 
-      if (SDL_RenderCopy(renderer, texture_, NULL, dstrect) < 0) {
+      if (SDL_RenderCopy(renderer, texture_.get(), NULL, dstrect) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't copy texture to renderer: %s", SDL_GetError());
         return EXIT_FAILURE;
       }
@@ -68,7 +72,7 @@ class GolView {
     }
 
   private:
-    SDL_Texture* texture_;
+    unique_texture_ptr texture_;
     const Gol& gol_;
 };
 
