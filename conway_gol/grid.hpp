@@ -16,8 +16,9 @@ namespace conway_gol {
     using iterator = typename container_type_::iterator;
     using const_iterator = typename container_type_::const_iterator;
 
-    Grid() = delete;
-    ~Grid() = default;
+    Grid():
+        Grid(0, 0) {
+    }
 
     Grid(size_type width, size_type height):
         width_(width),
@@ -43,6 +44,8 @@ namespace conway_gol {
       other.height_ = 0;
       return *this;
     }
+
+    ~Grid() = default;
 
     inline size_type width() const noexcept {
       return width_;
