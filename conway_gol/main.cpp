@@ -7,9 +7,12 @@
 
 using namespace conway_gol;
 
-typedef struct pixel_rgb24 {
-  uint8_t r, g, b;
-} pixel_rgb24_t;
+class PixelFormatDeleter {
+  public:
+    void operator()(SDL_PixelFormat* format) noexcept {
+      SDL_FreeFormat(format);
+    }
+};
 
 class TextureDeleter {
   public:
@@ -18,6 +21,7 @@ class TextureDeleter {
     }
 };
 
+typedef std::unique_ptr<SDL_PixelFormat, PixelFormatDeleter> unique_pixel_format_ptr;
 typedef std::unique_ptr<SDL_Texture, TextureDeleter> unique_texture_ptr;
 
 class GolView {
@@ -25,7 +29,8 @@ class GolView {
     GolView() = delete;
 
     GolView(SDL_Renderer* renderer, const Gol& gol):
-        texture_(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
+        pixel_format_(SDL_AllocFormat(SDL_PIXELFORMAT_RGB24)),
+        texture_(SDL_CreateTexture(renderer, pixel_format_->format,
           SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height())),
         gol_(gol) {
     }
@@ -43,7 +48,7 @@ class GolView {
     }
 
     int draw(SDL_Renderer* renderer, const SDL_Rect* dstrect) {
-      pixel_rgb24_t* pixels;
+      Uint8* pixels;
       int pitch;
 
       if (SDL_LockTexture(texture_.get(), NULL, (void**) &pixels, &pitch) < 0) {
@@ -51,13 +56,15 @@ class GolView {
         return EXIT_FAILURE;
       }
 
-      static constexpr pixel_rgb24_t alive = { 0xFF, 0xFF, 0xFF };
-      static constexpr pixel_rgb24_t dead = {0};
+      static constexpr SDL_Color alive_color = { 0xFF, 0xFF, 0xFF, 0xFF };
+      static constexpr SDL_Color dead_color = { 0, 0, 0, 0xFF };
 
       for (Gol::size_type row = 0; row < gol_.height(); row++) {
         for (Gol::size_type column = 0; column < gol_.width(); column++) {
-          size_t pixel_index = (row * gol_.width() + column);
-          pixels[pixel_index] = gol_.at(column, row) ? alive : dead;
+          size_t pixel_index = (row * gol_.width() + column) * pixel_format_->BytesPerPixel;
+          const SDL_Color& color = gol_.at(column, row) ? alive_color : dead_color;
+          *((Uint32*) (pixels + pixel_index)) =
+            SDL_MapRGBA(pixel_format_.get(), color.r, color.g, color.b, color.a);
         }
       }
 
@@ -72,6 +79,7 @@ class GolView {
     }
 
   private:
+    unique_pixel_format_ptr pixel_format_;
     unique_texture_ptr texture_;
     const Gol& gol_;
 };
