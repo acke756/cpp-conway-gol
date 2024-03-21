@@ -54,21 +54,21 @@ namespace conway_gol {
     Gol::coordinate c;
     switch (event.button) {
       case SDL_BUTTON_LEFT:
-        if (!gol_view_.cell_at(event.x, event.y, c)) {
-          return 0;
+        c = gol_view_.cell_at(event.x, event.y);
+        if (gol_.has_data_at(c)) {
+          gol_.at(c) = true;
+          gol_view_.draw();
         }
 
-        gol_.at(c) = true;
-        gol_view_.draw();
         return 0;
 
       case SDL_BUTTON_RIGHT:
-        if (!gol_view_.cell_at(event.x, event.y, c)) {
-          return 0;
+        c = gol_view_.cell_at(event.x, event.y);
+        if (gol_.has_data_at(c)) {
+          gol_.at(c) = false;
+          gol_view_.draw();
         }
 
-        gol_.at(c) = false;
-        gol_view_.draw();
         return 0;
 
       default:
