@@ -79,6 +79,10 @@ class GolView {
       return EXIT_SUCCESS;
     }
 
+    void set_draw_rect(const SDL_Rect& draw_rect) {
+      draw_rect_ = draw_rect;
+    }
+
   private:
     unique_pixel_format_ptr pixel_format_;
     unique_texture_ptr texture_;
@@ -96,6 +100,19 @@ class GolController {
 
     int on_program_start(SDL_Renderer* renderer) {
       return gol_view_.draw(renderer);
+    }
+
+    int handle_event(SDL_Renderer* renderer, const SDL_Event& event) {
+      switch (event.type) {
+        case SDL_KEYDOWN:
+          return handle_event(renderer, event.key);
+
+        case SDL_WINDOWEVENT:
+          return handle_event(renderer, event.window);
+
+        default:
+          return 0;
+      }
     }
 
     int handle_event(SDL_Renderer* renderer, const SDL_KeyboardEvent& event) {
@@ -117,6 +134,21 @@ class GolController {
       }
 
       return 0;
+    }
+
+    int handle_event(SDL_Renderer* renderer, const SDL_WindowEvent& event) {
+      if (event.event != SDL_WINDOWEVENT_RESIZED) {
+        return 0;
+      }
+
+      SDL_Rect view_rect{0};
+      int retval = SDL_GetRendererOutputSize(renderer, &view_rect.w, &view_rect.h);
+      if (retval < 0) {
+        return retval;
+      }
+
+      gol_view_.set_draw_rect(view_rect);
+      return gol_view_.draw(renderer);
     }
 
   private:
@@ -164,11 +196,9 @@ int on_create_renderer(SDL_Renderer* renderer) {
       return EXIT_SUCCESS;
     }
 
-    if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN) {
-      if (controller.handle_event(renderer, event.key) < 0) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error while handling event: %s", SDL_GetError());
-        return EXIT_FAILURE;
-      }
+    if (controller.handle_event(renderer, event) < 0) {
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error while handling event: %s", SDL_GetError());
+      return EXIT_FAILURE;
     }
 
     SDL_RenderPresent(renderer);
