@@ -20,6 +20,8 @@ namespace conway_gol {
     const_reference at(const coordinate& c) const;
     reference at(const coordinate& c);
 
+    bool has_data_at(const coordinate& c) const noexcept;
+
     void update();
 
     friend std::ostream& operator<<(std::ostream& os, const Gol& gol);

@@ -36,6 +36,10 @@ namespace conway_gol {
     return data_.at(c);
   }
 
+  bool Gol::has_data_at(const coordinate& c) const noexcept {
+    return data_.has_data_at(c);
+  }
+
   void Gol::update() {
     // TODO: Look into memory optimization.
     Grid<bool> new_data(data_);
