@@ -17,6 +17,9 @@ namespace conway_gol {
     switch (event.type) {
       case SDL_KEYDOWN:
         return handle_event(event.key);
+
+      case SDL_MOUSEBUTTONDOWN:
+        return handle_event(event.button);
         
       case SDL_WINDOWEVENT:
         return handle_event(event.window);
@@ -45,6 +48,23 @@ namespace conway_gol {
     }
 
     return 0;
+  }
+
+  int GolController::handle_event(const SDL_MouseButtonEvent& event) {
+    switch (event.button) {
+      case SDL_BUTTON_LEFT:
+        Gol::size_type column, row;
+        if (!gol_view_.cell_at(event.x, event.y, column, row)) {
+          return 0;
+        }
+
+        gol_.at(column, row) = true;
+        gol_view_.draw();
+        return 0;
+
+      default:
+        return 0;
+    }
   }
 
   int GolController::handle_event(const SDL_WindowEvent& event) {

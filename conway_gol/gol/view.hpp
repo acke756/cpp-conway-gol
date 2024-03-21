@@ -27,6 +27,9 @@ namespace conway_gol {
 
       int draw();
 
+      bool cell_at(Sint32 window_x, Sint32 window_y,
+          Gol::size_type& column, Gol::size_type& row);
+
     private:
       SDL_Renderer* renderer_;
       unique_pixel_format_ptr pixel_format_;

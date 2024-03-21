@@ -44,4 +44,18 @@ namespace conway_gol {
     return SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
   }
 
+  bool GolView::cell_at(Sint32 window_x, Sint32 window_y,
+      Gol::size_type& column, Gol::size_type& row) {
+    float x = (static_cast<float>(window_x) - draw_rect_.x) / pixels_per_cell_;
+    float y = (static_cast<float>(window_y) - draw_rect_.y) / pixels_per_cell_;
+
+    if (x < 0 || y < 0) {
+      return false;
+    }
+
+    column = static_cast<Gol::size_type>(x);
+    row = static_cast<Gol::size_type>(y);
+    return column < gol_.width() && row < gol_.height();
+  }
+
 } // namespace conway_gol

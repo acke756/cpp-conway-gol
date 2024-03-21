@@ -13,6 +13,7 @@ This should result in the executable file `conway-gol`.
 
 ## Usage
 
-While the program is running, the following keyboard inputs are available:
+While the program is running, the following actions are available:
 - Enter: Advance to the next state.
 - Ctrl-W: Exit.
+- Left click: Bring the clicked cell to life.
