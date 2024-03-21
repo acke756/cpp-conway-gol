@@ -12,10 +12,10 @@ namespace conway_gol {
       GolController() = delete;
       GolController(Gol& gol, GolView&& gol_view);
 
-      int on_program_start(SDL_Renderer* renderer);
-      int handle_event(SDL_Renderer* renderer, const SDL_Event& event);
-      int handle_event(SDL_Renderer* renderer, const SDL_KeyboardEvent& event);
-      int handle_event(SDL_Renderer* renderer, const SDL_WindowEvent& event);
+      int on_program_start();
+      int handle_event(const SDL_Event& event);
+      int handle_event(const SDL_KeyboardEvent& event);
+      int handle_event(const SDL_WindowEvent& event);
 
     private:
       Gol& gol_;

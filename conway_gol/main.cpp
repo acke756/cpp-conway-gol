@@ -23,7 +23,7 @@ int on_create_renderer(SDL_Renderer* renderer) {
   }
 
   GolController controller(gol, std::move(gol_view));
-  if (controller.on_program_start(renderer) < 0) {
+  if (controller.on_program_start() < 0) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error on program start: %s", SDL_GetError());
     return EXIT_FAILURE;
   }
@@ -39,7 +39,7 @@ int on_create_renderer(SDL_Renderer* renderer) {
       return EXIT_SUCCESS;
     }
 
-    if (controller.handle_event(renderer, event) < 0) {
+    if (controller.handle_event(event) < 0) {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error while handling event: %s", SDL_GetError());
       return EXIT_FAILURE;
     }

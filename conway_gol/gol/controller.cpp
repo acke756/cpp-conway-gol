@@ -9,26 +9,24 @@ namespace conway_gol {
       gol_view_(std::move(gol_view)) {
   }
 
-  int GolController::on_program_start(SDL_Renderer* renderer) {
-    return gol_view_.draw(renderer);
+  int GolController::on_program_start() {
+    return gol_view_.draw();
   }
 
-  int GolController::handle_event(SDL_Renderer* renderer,
-      const SDL_Event& event) {
+  int GolController::handle_event(const SDL_Event& event) {
     switch (event.type) {
       case SDL_KEYDOWN:
-        return handle_event(renderer, event.key);
+        return handle_event(event.key);
         
       case SDL_WINDOWEVENT:
-        return handle_event(renderer, event.window);
+        return handle_event(event.window);
 
       default:
         return 0;
     }
   }
 
-  int GolController::handle_event(SDL_Renderer* renderer,
-      const SDL_KeyboardEvent& event) {
+  int GolController::handle_event(const SDL_KeyboardEvent& event) {
     if (event.type == SDL_KEYUP) {
       return 0;
     }
@@ -36,7 +34,7 @@ namespace conway_gol {
     switch (event.keysym.sym) {
       case SDLK_RETURN:
         gol_.update();
-        return gol_view_.draw(renderer);
+        return gol_view_.draw();
 
       case SDLK_w:
         if (event.keysym.mod & KMOD_CTRL
@@ -49,13 +47,12 @@ namespace conway_gol {
     return 0;
   }
 
-  int GolController::handle_event(SDL_Renderer* renderer,
-      const SDL_WindowEvent& event) {
+  int GolController::handle_event(const SDL_WindowEvent& event) {
     if (event.event != SDL_WINDOWEVENT_RESIZED) {
       return 0;
     }
 
-    return gol_view_.draw(renderer);
+    return gol_view_.draw();
   }
 
   // --- Private member functions ---

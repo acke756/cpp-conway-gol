@@ -25,9 +25,10 @@ namespace conway_gol {
         return static_cast<bool>(texture_);
       }
 
-      int draw(SDL_Renderer* renderer);
+      int draw();
 
     private:
+      SDL_Renderer* renderer_;
       unique_pixel_format_ptr pixel_format_;
       unique_texture_ptr texture_;
       const Gol& gol_;
