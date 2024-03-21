@@ -28,26 +28,27 @@ namespace conway_gol {
     return data_.height();
   }
 
-  const_reference Gol::at(size_type column, size_type row) const {
-    return data_.at(column, row);
+  const_reference Gol::at(const coordinate& c) const {
+    return data_.at(c);
   }
 
-  reference Gol::at(size_type column, size_type row) {
-    return data_.at(column, row);
+  reference Gol::at(const coordinate& c) {
+    return data_.at(c);
   }
 
   void Gol::update() {
     // TODO: Look into memory optimization.
     Grid<bool> new_data(data_);
+    coordinate c;
 
-    for (size_type row = 0; row < data_.height(); row++) {
-      for (size_type column = 0; column < data_.width(); column++) {
-        unsigned int nb_count = live_neighbour_count_(column, row);
+    for (c.row = 0; c.row < data_.height(); c.row++) {
+      for (c.column = 0; c.column < data_.width(); c.column++) {
+        unsigned int nb_count = live_neighbour_count_(c);
 
         if (nb_count == 3) {
-          new_data.at(column, row) = true;
+          new_data.at(c) = true;
         } else if (nb_count < 2 || nb_count > 3) {
-          new_data.at(column, row) = false;
+          new_data.at(c) = false;
         }
       }
     }
@@ -57,17 +58,17 @@ namespace conway_gol {
 
   // --- Private methods ---
 
-  unsigned int Gol::live_neighbour_count_(size_type column, size_type row) const {
+  unsigned int Gol::live_neighbour_count_(const coordinate& c) const {
     unsigned int retval = 0;
+    coordinate nb; // nb is short for neighbour
 
-    // Abbreviating neighbour as nb.
-    for (size_type nb_row = row - 1; nb_row != row + 2; nb_row++) {
-      for (size_type nb_column = column - 1; nb_column != column + 2; nb_column++) {
-        if (!data_.has_data_at(nb_column, nb_row) || (nb_row == row && nb_column == column)) {
+    for (nb.row = c.row - 1; nb.row != c.row + 2; nb.row++) {
+      for (nb.column = c.column - 1; nb.column != c.column + 2; nb.column++) {
+        if (!data_.has_data_at(nb) || (nb == c)) {
           continue;
         }
 
-        retval += data_.at(nb_column, nb_row) ? 1 : 0;
+        retval += data_.at(nb) ? 1 : 0;
       }
     }
 
@@ -77,12 +78,13 @@ namespace conway_gol {
   // --- Non-member functions ---
 
   std::ostream& operator<<(std::ostream& os, const Gol& gol) {
-    for (size_type row = 0; row < gol.data_.height(); row++) {
-      for (size_type column = 0; column < gol.data_.width(); column++) {
-        os << (gol.data_.at(column, row) ? '*' : ' ');
+    Gol::coordinate c;
+    for (c.row = 0; c.row < gol.data_.height(); c.row++) {
+      for (c.column = 0; c.column < gol.data_.width(); c.column++) {
+        os << (gol.data_.at(c) ? '*' : ' ');
       }
 
-      if (row != gol.data_.height() - 1) {
+      if (c.row != gol.data_.height() - 1) {
         os << std::endl;
       }
     }

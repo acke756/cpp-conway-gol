@@ -10,14 +10,15 @@ namespace conway_gol {
     using size_type = grid_type::size_type;
     using reference = grid_type::reference;
     using const_reference = grid_type::const_reference;
+    using coordinate = grid_type::coordinate;
 
     Gol(size_type width, size_type height);
 
     size_type width() const;
     size_type height() const;
 
-    const_reference at(size_type row, size_type column) const;
-    reference at(size_type row, size_type column);
+    const_reference at(const coordinate& c) const;
+    reference at(const coordinate& c);
 
     void update();
 
@@ -26,7 +27,7 @@ namespace conway_gol {
     private:
     Grid<bool> data_;
 
-    unsigned int live_neighbour_count_(size_type row, size_type column) const;
+    unsigned int live_neighbour_count_(const coordinate& c) const;
   };
 
   std::ostream& operator<<(std::ostream& os, const Gol& gol);

@@ -16,6 +16,18 @@ namespace conway_gol {
     using iterator = typename container_type_::iterator;
     using const_iterator = typename container_type_::const_iterator;
 
+    typedef struct coordinate {
+      size_type column, row;
+
+      friend inline bool operator==(const coordinate& lhs, const coordinate& rhs) {
+        return lhs.column == rhs.column && lhs.row == rhs.row;
+      }
+
+      friend inline bool operator!=(const coordinate& lhs, const coordinate& rhs) {
+        return !(lhs == rhs);
+      }
+    } coordinate;
+
     Grid():
         Grid(0, 0) {
     }
@@ -71,18 +83,18 @@ namespace conway_gol {
       return data_.end();
     }
 
-    inline bool has_data_at(size_type column, size_type row) const noexcept {
-      return column < width_ && row < height_;
+    inline bool has_data_at(const coordinate& c) const noexcept {
+      return c.column < width_ && c.row < height_;
     }
 
-    const_reference at(size_type column, size_type row) const {
-      throw_if_invalid_index_(column, row);
-      return data_.at(index_of_(column, row));
+    const_reference at(const coordinate& c) const {
+      throw_if_invalid_(c);
+      return data_.at(index_of_(c));
     }
 
-    reference at(size_type column, size_type row) {
-      throw_if_invalid_index_(column, row);
-      return data_.at(index_of_(column, row));
+    reference at(const coordinate& c) {
+      throw_if_invalid_(c);
+      return data_.at(index_of_(c));
     }
 
     private:
@@ -90,14 +102,14 @@ namespace conway_gol {
     size_type height_;
     container_type_ data_;
 
-    inline size_type index_of_(size_type column, size_type row) const noexcept {
-      return width_ * row + column;
+    inline size_type index_of_(const coordinate& c) const noexcept {
+      return width_ * c.row + c.column;
     }
 
-    void throw_if_invalid_index_(size_type column, size_type row) const {
-      if (!has_data_at(column, row)) {
+    void throw_if_invalid_(const coordinate& c) const {
+      if (!has_data_at(c)) {
         std::ostringstream oss;
-        oss << "Index (" << column << ", " << row
+        oss << "Index (" << c.column << ", " << c.row
           << ") out of range for Grid with dimensions ("
           << width_ << ", " << height_ << ")";
         throw std::out_of_range(oss.str());
