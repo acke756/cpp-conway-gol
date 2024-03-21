@@ -17,3 +17,4 @@ While the program is running, the following actions are available:
 - Enter: Advance to the next state.
 - Ctrl-W: Exit.
 - Left click: Bring the clicked cell to life.
+- Right click: Kill the clicked cell.
