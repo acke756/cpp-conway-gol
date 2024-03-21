@@ -15,7 +15,7 @@ endif()
 
 set(SOURCES
   ${CMAKE_PROJECT_NAME}/main.cpp
-  ${CMAKE_PROJECT_NAME}/gol.cpp
+  ${CMAKE_PROJECT_NAME}/gol/model.cpp
 )
 
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
