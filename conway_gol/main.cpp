@@ -11,13 +11,7 @@ int on_create_renderer(SDL_Renderer* renderer) {
   SDL_Event event;
   conway_gol::Gol gol(80, 50);
 
-  SDL_Rect gol_draw_rect{0};
-  if (SDL_GetRendererOutputSize(renderer, &gol_draw_rect.w, &gol_draw_rect.h) < 0) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't get renderer size: %s", SDL_GetError());
-    return EXIT_FAILURE;
-  }
-
-  GolView gol_view(renderer, gol, gol_draw_rect);
+  GolView gol_view(renderer, gol);
   if (!gol_view) {
     return EXIT_FAILURE;
   }

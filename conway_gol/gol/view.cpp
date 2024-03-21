@@ -4,7 +4,7 @@ namespace conway_gol {
 
   // --- Public member functions ---
 
-  GolView::GolView(SDL_Renderer* renderer, const Gol& gol, const SDL_Rect& draw_rect):
+  GolView::GolView(SDL_Renderer* renderer, const Gol& gol):
       renderer_(renderer),
       pixel_format_(SDL_AllocFormat(SDL_PIXELFORMAT_RGB24)),
       texture_(SDL_CreateTexture(renderer, pixel_format_->format,

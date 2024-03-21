@@ -11,7 +11,7 @@ namespace conway_gol {
   class GolView {
     public:
       GolView() = delete;
-      GolView(SDL_Renderer* renderer, const Gol& gol, const SDL_Rect& draw_rect);
+      GolView(SDL_Renderer* renderer, const Gol& gol);
 
       GolView(const GolView&) = delete;
       GolView(GolView&& other) = default;
