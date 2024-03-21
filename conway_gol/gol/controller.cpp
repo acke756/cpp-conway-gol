@@ -55,13 +55,6 @@ namespace conway_gol {
       return 0;
     }
 
-    SDL_Rect view_rect{0};
-    int retval = SDL_GetRendererOutputSize(renderer, &view_rect.w, &view_rect.h);
-    if (retval < 0) {
-      return retval;
-    }
-
-    gol_view_.set_draw_rect(view_rect);
     return gol_view_.draw(renderer);
   }
 

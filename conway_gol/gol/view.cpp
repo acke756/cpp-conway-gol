@@ -4,12 +4,16 @@ namespace conway_gol {
 
   // --- Public member functions ---
 
-  GolView::GolView(SDL_Renderer* renderer, const Gol& gol, SDL_Rect draw_rect):
-    pixel_format_(SDL_AllocFormat(SDL_PIXELFORMAT_RGB24)),
-    texture_(SDL_CreateTexture(renderer, pixel_format_->format,
-          SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height())),
-    gol_(gol),
-    draw_rect_(draw_rect) {
+  GolView::GolView(SDL_Renderer* renderer, const Gol& gol, const SDL_Rect& draw_rect):
+      pixel_format_(SDL_AllocFormat(SDL_PIXELFORMAT_RGB24)),
+      texture_(SDL_CreateTexture(renderer, pixel_format_->format,
+            SDL_TEXTUREACCESS_STREAMING, gol.width(), gol.height())),
+      gol_(gol),
+      pixels_per_cell_(8.0f),
+      draw_rect_({
+        .w = pixels_per_cell_ * gol_.width(),
+        .h = pixels_per_cell_ * gol_.height(),
+      }) {
   }
 
   int GolView::draw(SDL_Renderer* renderer) {
@@ -36,7 +40,7 @@ namespace conway_gol {
 
     SDL_UnlockTexture(texture_.get());
 
-    return SDL_RenderCopy(renderer, texture_.get(), NULL, &draw_rect_);
+    return SDL_RenderCopyF(renderer, texture_.get(), NULL, &draw_rect_);
   }
 
 } // namespace conway_gol
