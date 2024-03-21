@@ -89,19 +89,24 @@ class GolView {
 class GolController {
   public:
     GolController() = delete;
-    GolController(Gol& gol):
-        gol_(gol) {
+    GolController(Gol& gol, GolView&& gol_view):
+        gol_(gol),
+        gol_view_(std::move(gol_view)) {
     }
 
-    void handle_event(const SDL_KeyboardEvent& event) {
+    int on_program_start(SDL_Renderer* renderer) {
+      return gol_view_.draw(renderer);
+    }
+
+    int handle_event(SDL_Renderer* renderer, const SDL_KeyboardEvent& event) {
       if (event.type == SDL_KEYUP) {
-        return;
+        return 0;
       }
 
       switch (event.keysym.sym) {
         case SDLK_RETURN:
           gol_.update();
-          break;
+          return gol_view_.draw(renderer);
 
         case SDLK_w:
           if (event.keysym.mod & KMOD_CTRL
@@ -110,10 +115,13 @@ class GolController {
           }
           break;
       }
+
+      return 0;
     }
 
   private:
     Gol& gol_;
+    GolView gol_view_;
 
     void push_quit_event_(Uint32 timestamp) {
       SDL_Event event;
@@ -127,7 +135,6 @@ class GolController {
 int on_create_renderer(SDL_Renderer* renderer) {
   SDL_Event event;
   conway_gol::Gol gol(80, 50);
-  GolController controller(gol);
 
   SDL_Rect gol_draw_rect{0};
   if (SDL_GetRendererOutputSize(renderer, &gol_draw_rect.w, &gol_draw_rect.h) < 0) {
@@ -137,17 +144,16 @@ int on_create_renderer(SDL_Renderer* renderer) {
 
   GolView gol_view(renderer, gol, gol_draw_rect);
   if (!gol_view) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create gol_view: %s", SDL_GetError());
+    return EXIT_FAILURE;
+  }
+
+  GolController controller(gol, std::move(gol_view));
+  if (controller.on_program_start(renderer) < 0) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error on program start: %s", SDL_GetError());
     return EXIT_FAILURE;
   }
 
   for (;;) {
-    if (gol_view.draw(renderer) < 0) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't copy texture to renderer: %s", SDL_GetError());
-      return EXIT_FAILURE;
-    }
-
-    SDL_RenderPresent(renderer);
 
     if (SDL_WaitEvent(&event) == 0) {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error while waiting for event: %s", SDL_GetError());
@@ -159,8 +165,13 @@ int on_create_renderer(SDL_Renderer* renderer) {
     }
 
     if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN) {
-      controller.handle_event(event.key);
+      if (controller.handle_event(renderer, event.key) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error while handling event: %s", SDL_GetError());
+        return EXIT_FAILURE;
+      }
     }
+
+    SDL_RenderPresent(renderer);
   }
 
   return EXIT_SUCCESS;
