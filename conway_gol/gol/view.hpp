@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL_render.h>
 
+#include <optional>
+
 namespace conway_gol {
   class GolView {
     public:
@@ -27,7 +29,7 @@ namespace conway_gol {
 
       int draw();
 
-      Gol::coordinate cell_at(Sint32 window_x, Sint32 window_y);
+      std::optional<Gol::coordinate> cell_at(Sint32 window_x, Sint32 window_y);
 
     private:
       SDL_Renderer* renderer_;

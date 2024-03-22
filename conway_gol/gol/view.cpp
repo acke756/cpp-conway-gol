@@ -45,7 +45,8 @@ namespace conway_gol {
     return SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
   }
 
-  Gol::coordinate GolView::cell_at(Sint32 window_x, Sint32 window_y) {
+  std::optional<Gol::coordinate> GolView::cell_at(
+      Sint32 window_x, Sint32 window_y) {
     float x = (static_cast<float>(window_x) - draw_rect_.x) / pixels_per_cell_;
     float y = (static_cast<float>(window_y) - draw_rect_.y) / pixels_per_cell_;
 
@@ -54,10 +55,17 @@ namespace conway_gol {
       y = -1.0f;
     }
 
-    return {
+    std::optional<Gol::coordinate> retval;
+    Gol::coordinate c {
       .column = static_cast<Gol::size_type>(x),
       .row = static_cast<Gol::size_type>(y),
     };
+
+    if (gol_.has_data_at(c)) {
+      retval = c;
+    }
+
+    return retval;
   }
 
 } // namespace conway_gol

@@ -1,5 +1,7 @@
 #include <conway_gol/gol/controller.hpp>
 
+#include <optional>
+
 namespace conway_gol {
 
   // --- Public member functions ---
@@ -51,12 +53,12 @@ namespace conway_gol {
   }
 
   int GolController::handle_event(const SDL_MouseButtonEvent& event) {
-    Gol::coordinate c;
+    std::optional<Gol::coordinate> c;
     switch (event.button) {
       case SDL_BUTTON_LEFT:
         c = gol_view_.cell_at(event.x, event.y);
-        if (gol_.has_data_at(c)) {
-          gol_.at(c) = !gol_.at(c);
+        if (c) {
+          gol_.at(*c) = !gol_.at(*c);
           gol_view_.draw();
         }
 
