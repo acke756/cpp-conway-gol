@@ -22,6 +22,9 @@ namespace conway_gol {
 
       case SDL_MOUSEBUTTONDOWN:
         return handle_event(event.button);
+
+      case SDL_MOUSEMOTION:
+        return handle_event(event.motion);
         
       case SDL_WINDOWEVENT:
         return handle_event(event.window);
@@ -67,6 +70,16 @@ namespace conway_gol {
       default:
         return 0;
     }
+  }
+
+  int GolController::handle_event(const SDL_MouseMotionEvent& event) {
+    std::optional<Gol::coordinate> cell = gol_view_.cell_at(event.x, event.y);
+    if (cell == gol_view_.highlight()) {
+      return 0;
+    }
+
+    gol_view_.highlight(cell);
+    return gol_view_.draw();
   }
 
   int GolController::handle_event(const SDL_WindowEvent& event) {

@@ -42,7 +42,17 @@ namespace conway_gol {
 
     SDL_UnlockTexture(texture_.get());
 
-    return SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
+    int err = SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
+    if (err) {
+      return err;
+    }
+
+    err = draw_highlight_();
+    if (err) {
+      return err;
+    }
+
+    return 0;
   }
 
   std::optional<Gol::coordinate> GolView::cell_at(
@@ -66,6 +76,46 @@ namespace conway_gol {
     }
 
     return retval;
+  }
+
+  void GolView::highlight(const std::optional<Gol::coordinate>& cell) noexcept {
+    highlight_ = cell;
+  }
+
+  const std::optional<Gol::coordinate>& GolView::highlight() const noexcept {
+    return highlight_;
+  }
+
+  // --- Private member functions ---
+
+  int GolView::draw_highlight_() {
+    if (!highlight_) {
+      return 0;
+    }
+
+    int err;
+
+    err = SDL_SetRenderDrawColor(renderer_, 0xFF, 0, 0, 0xFF);
+    if (err) {
+      return err;
+    }
+
+    SDL_FRect rect = rect_of_(*highlight_);
+    err = SDL_RenderDrawRectF(renderer_, &rect);
+    if (err) {
+      return err;
+    }
+
+    return 0;
+  }
+
+  SDL_FRect GolView::rect_of_(const Gol::coordinate& cell) {
+    return {
+      .x = (pixels_per_cell_ * cell.column) - draw_rect_.x,
+      .y = (pixels_per_cell_ * cell.row) - draw_rect_.y,
+      .w = pixels_per_cell_,
+      .h = pixels_per_cell_,
+    };
   }
 
 } // namespace conway_gol

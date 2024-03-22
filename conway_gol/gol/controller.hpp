@@ -16,6 +16,7 @@ namespace conway_gol {
       int handle_event(const SDL_Event& event);
       int handle_event(const SDL_KeyboardEvent& event);
       int handle_event(const SDL_MouseButtonEvent& event);
+      int handle_event(const SDL_MouseMotionEvent& event);
       int handle_event(const SDL_WindowEvent& event);
 
     private:

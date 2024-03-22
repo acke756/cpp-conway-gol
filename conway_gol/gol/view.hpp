@@ -31,6 +31,9 @@ namespace conway_gol {
 
       std::optional<Gol::coordinate> cell_at(Sint32 window_x, Sint32 window_y);
 
+      void highlight(const std::optional<Gol::coordinate>& cell) noexcept;
+      const std::optional<Gol::coordinate>& highlight() const noexcept;
+
     private:
       SDL_Renderer* renderer_;
       unique_pixel_format_ptr pixel_format_;
@@ -38,6 +41,11 @@ namespace conway_gol {
       const Gol& gol_;
       float pixels_per_cell_;
       SDL_FRect draw_rect_;
+      std::optional<Gol::coordinate> highlight_;
+
+      int draw_highlight_();
+
+      SDL_FRect rect_of_(const Gol::coordinate& cell);
   };
 
 } // namespace conway_gol
