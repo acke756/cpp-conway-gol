@@ -12,7 +12,19 @@ namespace conway_gol {
   }
 
   int GolController::on_program_start() {
-    return gol_view_.draw();
+    int err;
+    
+    err = gol_view_.update();
+    if (err) {
+      return err;
+    }
+
+    err = gol_view_.draw();
+    if (err) {
+      return err;
+    }
+
+    return 0;
   }
 
   int GolController::handle_event(const SDL_Event& event) {
@@ -39,10 +51,22 @@ namespace conway_gol {
       return 0;
     }
 
+    int err;
     switch (event.keysym.sym) {
       case SDLK_RETURN:
         gol_.update();
-        return gol_view_.draw();
+
+        err = gol_view_.update();
+        if (err) {
+          return err;
+        }
+
+        err = gol_view_.draw();
+        if (err) {
+          return err;
+        }
+
+        return 0;
 
       case SDLK_w:
         if (event.keysym.mod & KMOD_CTRL
@@ -56,13 +80,26 @@ namespace conway_gol {
   }
 
   int GolController::handle_event(const SDL_MouseButtonEvent& event) {
+    int err;
     std::optional<Gol::coordinate> c;
+
     switch (event.button) {
       case SDL_BUTTON_LEFT:
         c = gol_view_.cell_at(event.x, event.y);
-        if (c) {
-          gol_.at(*c) = !gol_.at(*c);
-          gol_view_.draw();
+        if (!c) {
+          return 0;
+        }
+
+        gol_.at(*c) = !gol_.at(*c);
+
+        err = gol_view_.update();
+        if (err) {
+          return err;
+        }
+
+        err = gol_view_.draw();
+        if (err) {
+          return err;
         }
 
         return 0;

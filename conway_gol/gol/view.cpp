@@ -18,13 +18,28 @@ namespace conway_gol {
   }
 
   int GolView::draw() {
+    int err = SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
+    if (err) {
+      return err;
+    }
+
+    err = draw_highlight_();
+    if (err) {
+      return err;
+    }
+
+    return 0;
+  }
+
+  int GolView::update() {
     Uint8* pixels;
     int pitch;
+    int err;
 
-    int lock_result = SDL_LockTexture(texture_.get(), NULL,
+    err = SDL_LockTexture(texture_.get(), NULL,
         (void**) &pixels, &pitch);
-    if (lock_result < 0) {
-      return lock_result;
+    if (err) {
+      return err;
     }
 
     static constexpr SDL_Color alive_color = { 0xFF, 0xFF, 0xFF, 0xFF };
@@ -41,17 +56,6 @@ namespace conway_gol {
     }
 
     SDL_UnlockTexture(texture_.get());
-
-    int err = SDL_RenderCopyF(renderer_, texture_.get(), NULL, &draw_rect_);
-    if (err) {
-      return err;
-    }
-
-    err = draw_highlight_();
-    if (err) {
-      return err;
-    }
-
     return 0;
   }
 

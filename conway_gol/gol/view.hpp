@@ -28,6 +28,7 @@ namespace conway_gol {
       }
 
       int draw();
+      int update();
 
       std::optional<Gol::coordinate> cell_at(Sint32 window_x, Sint32 window_y);
 
