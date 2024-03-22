@@ -81,14 +81,14 @@ namespace conway_gol {
 
   // --- Non-member functions ---
 
-  std::ostream& operator<<(std::ostream& os, const Gol& gol) {
+  std::ostream& operator<<(std::ostream& os, const IGol& gol) {
     Gol::coordinate c;
-    for (c.row = 0; c.row < gol.data_.height(); c.row++) {
-      for (c.column = 0; c.column < gol.data_.width(); c.column++) {
-        os << (gol.data_.at(c) ? '*' : ' ');
+    for (c.row = 0; c.row < gol.height(); c.row++) {
+      for (c.column = 0; c.column < gol.width(); c.column++) {
+        os << (gol.at(c) ? '*' : ' ');
       }
 
-      if (c.row != gol.data_.height() - 1) {
+      if (c.row != gol.height() - 1) {
         os << std::endl;
       }
     }
