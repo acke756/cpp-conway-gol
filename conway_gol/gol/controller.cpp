@@ -6,7 +6,7 @@ namespace conway_gol {
 
   // --- Public member functions ---
 
-  GolController::GolController(Gol& gol, GolView&& gol_view):
+  GolController::GolController(IGol& gol, GolView&& gol_view):
       gol_(gol),
       gol_view_(std::move(gol_view)) {
   }
@@ -81,7 +81,7 @@ namespace conway_gol {
 
   int GolController::handle_event(const SDL_MouseButtonEvent& event) {
     int err;
-    std::optional<Gol::coordinate> c;
+    std::optional<IGol::coordinate> c;
 
     switch (event.button) {
       case SDL_BUTTON_LEFT:
@@ -110,7 +110,7 @@ namespace conway_gol {
   }
 
   int GolController::handle_event(const SDL_MouseMotionEvent& event) {
-    std::optional<Gol::coordinate> cell = gol_view_.cell_at(event.x, event.y);
+    std::optional<IGol::coordinate> cell = gol_view_.cell_at(event.x, event.y);
     if (cell == gol_view_.highlight()) {
       return 0;
     }

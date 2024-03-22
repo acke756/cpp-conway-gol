@@ -10,7 +10,7 @@ namespace conway_gol {
   class GolController {
     public:
       GolController() = delete;
-      GolController(Gol& gol, GolView&& gol_view);
+      GolController(IGol& gol, GolView&& gol_view);
 
       int on_program_start();
       int handle_event(const SDL_Event& event);
@@ -20,7 +20,7 @@ namespace conway_gol {
       int handle_event(const SDL_WindowEvent& event);
 
     private:
-      Gol& gol_;
+      IGol& gol_;
       GolView gol_view_;
 
       void push_quit_event_(Uint32 timestamp);

@@ -4,7 +4,7 @@ namespace conway_gol {
 
   // --- Public member functions ---
 
-  GolView::GolView(SDL_Renderer* renderer, const Gol& gol):
+  GolView::GolView(SDL_Renderer* renderer, const IGol& gol):
       renderer_(renderer),
       pixel_format_(SDL_AllocFormat(SDL_PIXELFORMAT_RGB24)),
       texture_(SDL_CreateTexture(renderer, pixel_format_->format,
@@ -45,7 +45,7 @@ namespace conway_gol {
     static constexpr SDL_Color alive_color = { 0xFF, 0xFF, 0xFF, 0xFF };
     static constexpr SDL_Color dead_color = { 0, 0, 0, 0xFF };
 
-    Gol::coordinate c;
+    IGol::coordinate c;
     for (c.row = 0; c.row < gol_.height(); c.row++) {
       for (c.column = 0; c.column < gol_.width(); c.column++) {
         size_t pixel_index = (c.row * gol_.width() + c.column) * pixel_format_->BytesPerPixel;
@@ -59,7 +59,7 @@ namespace conway_gol {
     return 0;
   }
 
-  std::optional<Gol::coordinate> GolView::cell_at(
+  std::optional<IGol::coordinate> GolView::cell_at(
       Sint32 window_x, Sint32 window_y) {
     float x = (static_cast<float>(window_x) - draw_rect_.x) / pixels_per_cell_;
     float y = (static_cast<float>(window_y) - draw_rect_.y) / pixels_per_cell_;
@@ -69,10 +69,10 @@ namespace conway_gol {
       y = -1.0f;
     }
 
-    std::optional<Gol::coordinate> retval;
-    Gol::coordinate c {
-      .column = static_cast<Gol::size_type>(x),
-      .row = static_cast<Gol::size_type>(y),
+    std::optional<IGol::coordinate> retval;
+    IGol::coordinate c {
+      .column = static_cast<IGol::size_type>(x),
+      .row = static_cast<IGol::size_type>(y),
     };
 
     if (gol_.has_data_at(c)) {
@@ -82,11 +82,11 @@ namespace conway_gol {
     return retval;
   }
 
-  void GolView::highlight(const std::optional<Gol::coordinate>& cell) noexcept {
+  void GolView::highlight(const std::optional<IGol::coordinate>& cell) noexcept {
     highlight_ = cell;
   }
 
-  const std::optional<Gol::coordinate>& GolView::highlight() const noexcept {
+  const std::optional<IGol::coordinate>& GolView::highlight() const noexcept {
     return highlight_;
   }
 
@@ -113,7 +113,7 @@ namespace conway_gol {
     return 0;
   }
 
-  SDL_FRect GolView::rect_of_(const Gol::coordinate& cell) {
+  SDL_FRect GolView::rect_of_(const IGol::coordinate& cell) {
     return {
       .x = (pixels_per_cell_ * cell.column) - draw_rect_.x,
       .y = (pixels_per_cell_ * cell.row) - draw_rect_.y,

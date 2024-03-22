@@ -13,7 +13,7 @@ namespace conway_gol {
   class GolView {
     public:
       GolView() = delete;
-      GolView(SDL_Renderer* renderer, const Gol& gol);
+      GolView(SDL_Renderer* renderer, const IGol& gol);
 
       GolView(const GolView&) = delete;
       GolView(GolView&& other) = default;
@@ -30,23 +30,23 @@ namespace conway_gol {
       int draw();
       int update();
 
-      std::optional<Gol::coordinate> cell_at(Sint32 window_x, Sint32 window_y);
+      std::optional<IGol::coordinate> cell_at(Sint32 window_x, Sint32 window_y);
 
-      void highlight(const std::optional<Gol::coordinate>& cell) noexcept;
-      const std::optional<Gol::coordinate>& highlight() const noexcept;
+      void highlight(const std::optional<IGol::coordinate>& cell) noexcept;
+      const std::optional<IGol::coordinate>& highlight() const noexcept;
 
     private:
       SDL_Renderer* renderer_;
       unique_pixel_format_ptr pixel_format_;
       unique_texture_ptr texture_;
-      const Gol& gol_;
+      const IGol& gol_;
       float pixels_per_cell_;
       SDL_FRect draw_rect_;
-      std::optional<Gol::coordinate> highlight_;
+      std::optional<IGol::coordinate> highlight_;
 
       int draw_highlight_();
 
-      SDL_FRect rect_of_(const Gol::coordinate& cell);
+      SDL_FRect rect_of_(const IGol::coordinate& cell);
   };
 
 } // namespace conway_gol
