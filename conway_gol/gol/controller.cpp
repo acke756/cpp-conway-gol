@@ -56,16 +56,7 @@ namespace conway_gol {
       case SDL_BUTTON_LEFT:
         c = gol_view_.cell_at(event.x, event.y);
         if (gol_.has_data_at(c)) {
-          gol_.at(c) = true;
-          gol_view_.draw();
-        }
-
-        return 0;
-
-      case SDL_BUTTON_RIGHT:
-        c = gol_view_.cell_at(event.x, event.y);
-        if (gol_.has_data_at(c)) {
-          gol_.at(c) = false;
+          gol_.at(c) = !gol_.at(c);
           gol_view_.draw();
         }
 

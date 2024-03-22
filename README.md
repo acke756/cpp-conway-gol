@@ -16,5 +16,4 @@ This should result in the executable file `conway-gol`.
 While the program is running, the following actions are available:
 - Enter: Advance to the next state.
 - Ctrl-W: Exit.
-- Left click: Bring the clicked cell to life.
-- Right click: Kill the clicked cell.
+- Left click: Toggle the state of the clicked cell.
