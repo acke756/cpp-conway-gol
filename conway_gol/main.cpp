@@ -7,6 +7,10 @@
 
 using namespace conway_gol;
 
+void log_error(const char* msg) {
+  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, msg, SDL_GetError());
+}
+
 int on_create_renderer(SDL_Renderer* renderer) {
   SDL_Event event;
   conway_gol::Gol gol(80, 50);
@@ -18,14 +22,14 @@ int on_create_renderer(SDL_Renderer* renderer) {
 
   GolController controller(gol, std::move(gol_view));
   if (controller.on_program_start() < 0) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error on program start: %s", SDL_GetError());
+    log_error("GolController error on program start: %s");
     return EXIT_FAILURE;
   }
 
   for (;;) {
 
     if (SDL_WaitEvent(&event) == 0) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error while waiting for event: %s", SDL_GetError());
+      log_error("Error while waiting for event: %s");
       return EXIT_FAILURE;
     }
 
@@ -34,7 +38,7 @@ int on_create_renderer(SDL_Renderer* renderer) {
     }
 
     if (controller.handle_event(event) < 0) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "GolController error while handling event: %s", SDL_GetError());
+      log_error("GolController error while handling event: %s");
       return EXIT_FAILURE;
     }
 
@@ -47,7 +51,7 @@ int on_create_renderer(SDL_Renderer* renderer) {
 int on_create_window(SDL_Window* window) {
   SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
   if (renderer == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s", SDL_GetError());
+    log_error("Couldn't create renderer: %s");
     return EXIT_FAILURE;
   }
 
@@ -63,7 +67,7 @@ int on_sdl_init() {
       640, 480, SDL_WINDOW_RESIZABLE);
 
   if (window == NULL) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s", SDL_GetError());
+    log_error("Couldn't create window: %s");
     return EXIT_FAILURE;
   }
 
@@ -75,7 +79,7 @@ int on_sdl_init() {
 
 int main(int argc, char** argv) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
+    log_error("Couldn't initialize SDL: %s");
     return EXIT_FAILURE;
   }
 
