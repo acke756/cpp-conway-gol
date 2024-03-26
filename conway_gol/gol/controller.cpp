@@ -47,10 +47,6 @@ namespace conway_gol {
   }
 
   int GolController::handle_event(const SDL_KeyboardEvent& event) {
-    if (event.type == SDL_KEYUP) {
-      return 0;
-    }
-
     int err;
     switch (event.keysym.sym) {
       case SDLK_RETURN:
